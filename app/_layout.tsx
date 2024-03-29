@@ -2,6 +2,10 @@ import { Slot, useRouter, useSegments } from "expo-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/utils/supabase";
 import { Session } from "@supabase/supabase-js";
+import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
+
+// Important: don't put queryclient in the component.
+const queryClient = new QueryClient();
 
 export default function RootLayout() {
   const [session, setSession] = useState<Session | null>(null);
@@ -28,5 +32,9 @@ export default function RootLayout() {
       router.replace(`/(protected)`);
     }
   }, [segments, router, isInitialized, session]);
-  return <Slot />;
+  return (
+    <QueryClientProvider client={queryClient}>
+      <Slot />
+    </QueryClientProvider>
+  );
 }
